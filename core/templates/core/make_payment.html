@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %} {% load crispy_forms_tags %} {% block content %}
+<div class="container">
+  <div
+    class="flex row justify-content-center align-items-center py-md-5 py-3"
+    style="min-height: 90vh"
+  >
+    <div class="col-12">
+      <h5>Make payment for {{ payment.amount }}</h5>
+      <script src="https://js.paystack.co/v1/inline.js"></script>
+          <button class="btn btn-large btn-success" onclick="payWithPayStack()">
+            Make Payment
+          </button>
+    </div>
+  </div>
+</div>
+<script>
+  function payWithPayStack() {
+    var handler = PaystackPop.setup({
+      key: "{{ paystack_public_key }}",
+      email: "{{ payment.email}}",
+      amount: "{{ payment.amount.value }}",
+      callback: function (response) {
+        window.location.href = "{% url 'payment:verify-payment' payment.ref %}";
+      },
+    });
+    handler.openIframe();
+  }
+</script>
+{% endblock %}
